@@ -1,0 +1,40 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
+local Window = Library.CreateLib("Ziddi Hub", "DarkTheme")
+
+local Tab = Window:NewTab("Auto Farm")
+
+local Section = Tab:NewSection("Bubble Auto Farm")
+
+-- Auto Blow Toggle
+getgenv().AutoBlow = false
+Section:NewToggle("Auto Blow Bubble", "Automatically blows bubble", function(state)
+    getgenv().AutoBlow = state
+end)
+
+-- Auto Sell Toggle
+getgenv().AutoSell = false
+Section:NewToggle("Auto Sell Bubble", "Automatically sells bubble", function(state)
+    getgenv().AutoSell = state
+end)
+
+-- Looping both auto functions
+spawn(function()
+    while true do
+        if getgenv().AutoBlow then
+            local args = {
+                [1] = "BlowBubble"
+            }
+            game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack(args))
+        end
+
+        if getgenv().AutoSell then
+            local args = {
+                [1] = "SellBubble"
+            }
+            game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack(args))
+        end
+
+        wait(0.1) -- Adjust delay as needed
+    end
+end)
