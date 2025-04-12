@@ -18,9 +18,16 @@ Section:NewToggle("Auto Sell Bubble", "Automatically sells bubble", function(sta
     getgenv().AutoSell = state
 end)
 
+-- Auto Claim Toggle
+getgenv().AutoClaim = false
+Section:NewToggle("Auto Claim Playtime", "Automatically claims playtime", function(state)
+    getgenv().AutoClaim = state
+end)
+
 -- Looping both auto functions
 spawn(function()
     while true do
+        -- Auto Blow Bubble
         if getgenv().AutoBlow then
             local args = {
                 [1] = "BlowBubble"
@@ -28,6 +35,7 @@ spawn(function()
             game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack(args))
         end
 
+        -- Auto Sell Bubble
         if getgenv().AutoSell then
             local args = {
                 [1] = "SellBubble"
@@ -35,6 +43,19 @@ spawn(function()
             game:GetService("ReplicatedStorage").Shared.Framework.Network.Remote.Event:FireServer(unpack(args))
         end
 
+        -- Auto Claim Playtime
+        if getgenv().AutoClaim then
+            for i = 1, 9 do
+                local args = {
+                    [1] = "ClaimPlaytime",
+                    [2] = i
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Framework"):WaitForChild("Network"):WaitForChild("Remote"):WaitForChild("Function"):InvokeServer(unpack(args))
+                wait(0.1)  -- Adjust delay as needed between claims
+            end
+        end
+
+        -- Main loop delay
         wait(0.1) -- Adjust delay as needed
     end
-end)
+end) -- End of the spawn function
